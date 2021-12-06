@@ -150,6 +150,16 @@ def goto_non():
                     goto_N = n+1
                     break
     goto_update(goto_N)
+def print_out():
+    outfile = open("test.txt","w")
+    for key in curation_dic:
+        outfile.write(key+"\t")
+        for i in range(len(curation_dic[key])):
+            outfile.write(curation_dic[key][i])
+            if i!=2:
+                outfile.write("\t")
+            else:
+                outfile.write("\n")
 def plot_curated():
     figures = []
     site = []
@@ -178,6 +188,9 @@ def plot_curated():
     plt.xticks([])
     scatter = FigureCanvasTkAgg(fig, gui) 
     scatter.get_tk_widget().grid(row=1,column=3)
+def cancel_c():
+    curation_dic.pop(img_dir)
+    show_progress()
 if __name__ == "__main__":
     # create a GUI window
     N = 0
@@ -223,9 +236,13 @@ if __name__ == "__main__":
     Next.grid(row=2,column=1,sticky='ew')
     goto_figure = tk.Button(gui,text="Go to Figure Number",command = goto_figure).grid(row=2,column=2,sticky="ew")
     current_label = tk.Label(gui,text = "Figure {N}/{num}".format(N=N+1,num=num_figures))
-    current_label.grid(row=3,column=0,columnspan=3)
+    current_label.grid(row=3,column=1)
     plot = tk.Button(gui,text = "Plot Curation", command = plot_curated)
     goto_non_b = tk.Button(gui,text = "Go to next uncurated", command = goto_non)
     plot.grid(row=2,column=3,sticky="ew")
     goto_non_b.grid(row=3,column=3,sticky="ew")
+    print_b = tk.Button(gui,text = "Print out",command = print_out)
+    print_b.grid(row=3,column=2,sticky="ew")
+    cancel_b = tk.Button(gui,text = "Cancel Curation",command = cancel_c)
+    cancel_b.grid(row=3,column=0,sticky ="ew")
     gui.mainloop()

@@ -1,3 +1,0 @@
-/home/jilong/github_repo/ManNovo/igvs/ctg2603_pilon_pilon_pilon_94,204_94,504.png	Yes	Uncertain	empty
-/home/jilong/github_repo/ManNovo/igvs/ctg556_pilon_pilon_pilon_1,340,446_1,340,746.png	No	Uncertain	empty
-/home/jilong/github_repo/ManNovo/igvs/ctg1036_pilon_pilon_pilon_1,501,896_1,502,196.png	Yes	Uncertain	empty

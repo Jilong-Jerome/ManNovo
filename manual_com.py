@@ -41,10 +41,10 @@ class ScrollableImage(tk.Frame):
             self.cnvs.xview_scroll(-1*(evt.delta), 'units') # For MacOS
             self.cnvs.xview_scroll(int(-1*(evt.delta/120)), 'units') # For windows
 def record_user(gui):
-    answer = simpledialog.askstring("Input", "What is your first name?",
+    answer = simpledialog.askstring("Input", "Please define your user ID?",
                                 parent=gui)
     if answer is not None:
-        print("Your first name is ", answer)
+        print("Your User ID is ", answer)
         return answer
 def show_progress():
     opinion = check_opinion(curation_dic,img_dir)
@@ -151,15 +151,15 @@ def goto_non():
                     break
     goto_update(goto_N)
 def print_out():
-    outfile = open("test.txt","w")
+    output = open(outfile,"w")
     for key in curation_dic:
-        outfile.write(key+"\t")
+        output.write(key+"\t")
         for i in range(len(curation_dic[key])):
-            outfile.write(curation_dic[key][i])
+            output.write(curation_dic[key][i])
             if i!=2:
-                outfile.write("\t")
+                output.write("\t")
             else:
-                outfile.write("\n")
+                output.write("\n")
 def plot_curated():
     figures = []
     site = []
@@ -188,13 +188,20 @@ def plot_curated():
     plt.xticks([])
     scatter = FigureCanvasTkAgg(fig, gui) 
     scatter.get_tk_widget().grid(row=1,column=3)
+def checking_previous():
+    global outfile
+    if os.path.isfile(outfile) and os.stat(outfile).st_size != 0:
+        temp_file = open(outfile)
+        for line in temp_file:
+            info = line.strip("\n").split("\t")
+            curation_dic[info[0]]=[info[1],info[2],info[3]]
+        temp_file.close()
 def cancel_c():
     curation_dic.pop(img_dir)
     show_progress()
 if __name__ == "__main__":
     # create a GUI window
     N = 0
-    output = open("test.txt","w")
     gui = tk.Tk()
     user_id = "empty"
     # set the background colour of GUI window
@@ -205,16 +212,18 @@ if __name__ == "__main__":
  
     # set the configuration of GUI window
     #gui.geometry("1200x800")
-    #if user_id == "empty":
-    #    user_id = record_user(gui)
-    
+    if user_id == "empty":
+        user_id = record_user(gui)
     folder_selected = filedialog.askdirectory()
+    outfile = folder_selected.split("/")[-1]+"_"+user_id
     pngs = os.listdir(folder_selected)
     num_figures = len(pngs)
     curation_dic = {}
+    checking_previous()
     img_dir = folder_selected+"/"+pngs[N]
     img_show(gui,img_dir)
     # Create the list of options
+    #show_progress()
     opinion = check_opinion(curation_dic,img_dir)
     status_label = tk.Label(gui, text="{N}/{num} have been checked\n Current Opinin of this:\n{opinion}".format(N=len(curation_dic),num=num_figures,opinion=opinion))
     status_label.grid(row=0,column=3)

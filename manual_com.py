@@ -1,8 +1,12 @@
 import tkinter as tk
+import numpy as np
 import os
 from tkinter import simpledialog
 from tkinter import ttk
 from tkinter import filedialog
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib import colors
 class ScrollableImage(tk.Frame):
     def __init__(self, master=None, **kw):
         self.image = kw.pop('image', None)
@@ -105,7 +109,8 @@ def info_update():
         if len(curation_dic)==num_figures:
             tk.messagebox.showinfo(title="All curated!", message="Manual Curation of {} is done".format(folder_selected))
     else:
-        tk.messagebox.showinfo(title="No more figures", message="There is no more figures after")
+        #tk.messagebox.showinfo(title="No more figures", message="There is no more figures after")
+        goto_non()
 def img_show(gui,img_dir):
     global img
     img = tk.PhotoImage(file=img_dir)
@@ -126,6 +131,53 @@ def goto_figure():
     goto_N = simpledialog.askstring("Input", "Which figure would you like to check?",
                                 parent=gui)
     goto_update(goto_N)
+def goto_non():
+    un_curated_list = []
+    for i in range(len(pngs)):
+       temp_img = folder_selected+"/"+pngs[i]
+       opinion = check_opinion(curation_dic,temp_img)
+       if opinion == "Not curated":
+           un_curated_list.append(i)
+    if len(un_curated_list) == 0: 
+        goto_N = 1
+        tk.messagebox.showinfo(title="All curated!", message="All done, directing back to the first figure now")
+    else:
+        if N > max(un_curated_list):
+            goto_N = min(un_curated_list)+1
+        else:
+            for n in un_curated_list:
+                if n > N:
+                    goto_N = n+1
+                    break
+    goto_update(goto_N)
+def plot_curated():
+    figures = []
+    site = []
+    color = []
+    for i in range(len(pngs)):
+        figures.append(i+1)
+        site.append(0)
+        temp_img =folder_selected+"/"+pngs[i] 
+        if temp_img in curation_dic:
+            if curation_dic[temp_img][0] == "Yes":
+                color.append(1)
+            else:
+                color.append(-1)
+        else:
+            color.append(0)
+    fig, ax = plt.subplots(figsize=(10,80), dpi=10)
+    #ax.scatter(site, figures, c=color)
+    #ax.set(xlim=(-1, 1),ylim=(1, len(pngs)), yticks=np.arange(1, len(pngs)))
+    Z = np.array(color).reshape((len(pngs),1))
+    cmap = colors.ListedColormap(['red','grey','blue'])
+    bounds = [-1.5,-0.5,0.5,1.5]
+    norm = colors.BoundaryNorm(bounds, cmap.N)
+    ax.imshow(Z, cmap=cmap, norm=norm)
+    plt.yticks(np.arange(0,len(pngs),1),np.arange(1, len(pngs)+1, 1)) 
+    ax.tick_params(axis='y', which='major', pad=1)
+    plt.xticks([])
+    scatter = FigureCanvasTkAgg(fig, gui) 
+    scatter.get_tk_widget().grid(row=1,column=3)
 if __name__ == "__main__":
     # create a GUI window
     N = 0
@@ -172,4 +224,8 @@ if __name__ == "__main__":
     goto_figure = tk.Button(gui,text="Go to Figure Number",command = goto_figure).grid(row=2,column=2,sticky="ew")
     current_label = tk.Label(gui,text = "Figure {N}/{num}".format(N=N+1,num=num_figures))
     current_label.grid(row=3,column=0,columnspan=3)
+    plot = tk.Button(gui,text = "Plot Curation", command = plot_curated)
+    goto_non_b = tk.Button(gui,text = "Go to next uncurated", command = goto_non)
+    plot.grid(row=2,column=3,sticky="ew")
+    goto_non_b.grid(row=3,column=3,sticky="ew")
     gui.mainloop()

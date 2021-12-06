@@ -45,6 +45,7 @@ def record_user(gui):
 def show_progress():
     opinion = check_opinion(curation_dic,img_dir)
     status_label['text']= "{N}/{num} have been checked\n Current Opinin:\n{opinion}".format(N=len(curation_dic),num=num_figures,opinion=opinion)
+    current_label['text'] = "Figure {N}/{num}".format(N=N+1,num=num_figures)
 def last_update():
     global N
     global img_dir
@@ -62,6 +63,16 @@ def next_update():
     if N >= num_figures :
         tk.messagebox.showinfo(title="No more figures", message="This is the last one")
         N = num_figures-1
+    img_dir = folder_selected+"/"+pngs[N]
+    img_show(gui,img_dir)
+    show_progress()
+def goto_update(answer):
+    global N
+    global img_dir
+    N = int(answer)-1
+    if N >= num_figures or N <0 :
+        tk.messagebox.showinfo(title="No such figures", message="try something else, directing to Figure1 now")
+        N = 0
     img_dir = folder_selected+"/"+pngs[N]
     img_show(gui,img_dir)
     show_progress()
@@ -111,6 +122,10 @@ def check_opinion(curation_dic,img_dir):
         which_source = curation_dic[img_dir][1]
         opinion = "Denvo:{if_real}\tSource:{which_source}".format(if_real=if_real,which_source=which_source) 
     return opinion
+def goto_figure():
+    goto_N = simpledialog.askstring("Input", "Which figure would you like to check?",
+                                parent=gui)
+    goto_update(goto_N)
 if __name__ == "__main__":
     # create a GUI window
     N = 0
@@ -154,5 +169,7 @@ if __name__ == "__main__":
     Next= tk.Button(gui, text ="Next Figure", command = next_update)
     Last.grid(row=2,column=0,sticky='ew')
     Next.grid(row=2,column=1,sticky='ew')
-    goto_figure = tk.entry(gui)
+    goto_figure = tk.Button(gui,text="Go to Figure Number",command = goto_figure).grid(row=2,column=2,sticky="ew")
+    current_label = tk.Label(gui,text = "Figure {N}/{num}".format(N=N+1,num=num_figures))
+    current_label.grid(row=3,column=0,columnspan=3)
     gui.mainloop()

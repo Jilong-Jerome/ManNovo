@@ -23,6 +23,7 @@ After ID is given, now you can select the folder containing the figures to be cu
 Now you will see the first figure shown in the middle. Select `yes`,`no`,or `Uncertain` for the option "Is it de novo mutation?", select `Mother`,`Father`, or `Uncertain` for the option "What is the source of mutation?". At last, by clicking `submit`, your curation result for this figure will be recorded and next figure will be shown.
 
 ### 4.Browse the figures and curation results.
+By `Last Figure`, `Next Figure`,`Go to Figure Number` button, you can browser around the figures and their relevant curation results. If you wish to change or cancel the current curation result, do `Submit` again or `Cancel Curation`. `Plot Curation` will generate a meshgrid plot in bar showing the curation result of all figures, where red codes for "False de novo mutation", blue codes for "True de novo mutation" and grey codes for "Not curated yet".
 
 ### 5.Print out your curation results.
 Once you have finished all your curation (maybe not finished), click `Print out` and a tsv file named with `"Figure folder name"_"User ID"` will be created or updated with all the curations have been done. If the output file from `Print out` option has already exist befor opening the program, the previous curation results will be loaded automatically. You may click on `Go to next uncurated` button to continue the unfinished curation task. Remember to `Print out` again after your new curation to save your new curation updates.
